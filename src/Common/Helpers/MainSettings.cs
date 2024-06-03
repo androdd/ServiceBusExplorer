@@ -80,6 +80,8 @@ namespace ServiceBusExplorer.Helpers
 
         public List<NodeColorInfo> NodesColors { get; set; } = new List<NodeColorInfo>();
 
+        public string ConfigFolderModeshift { get; set; }
+
         #endregion
 
         #region Public Static Methods
@@ -140,6 +142,8 @@ namespace ServiceBusExplorer.Helpers
             ProxyPassword = string.Empty;
             
             NodesColors = new List<NodeColorInfo>();
+
+            ConfigFolderModeshift = string.Empty;
         }
 
         public override bool Equals(object other)
@@ -186,7 +190,10 @@ namespace ServiceBusExplorer.Helpers
             if (ProxyBypassList != otherProperties.ProxyBypassList) return false;
             if (ProxyUserName != otherProperties.ProxyUserName) return false;
             if (ProxyPassword != otherProperties.ProxyPassword) return false;
+
             if (NodesColors.SequenceEqual(otherProperties.NodesColors)) return false;
+
+            if (ConfigFolderModeshift != otherProperties.ConfigFolderModeshift) return false;
 
             return true;
         }
@@ -316,6 +323,9 @@ namespace ServiceBusExplorer.Helpers
 
                 case ConfigurationParameters.NodesColors:
                     return NodesColors;
+
+                case ConfigurationParameters.ConfigFolderModeshift:
+                    return ConfigFolderModeshift;
             }
 
             throw new InvalidOperationException(String.Format("Unexpected value for setting: {0}", setting));

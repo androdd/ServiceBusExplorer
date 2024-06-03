@@ -186,6 +186,16 @@ namespace ServiceBusExplorer.Forms
                 }
             }
         }
+
+        private void btnBrowseConfigFolderModeshift_Click(object sender, EventArgs e)
+        {
+            if (folderBrowserDialogModeshift.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            configFolderModeshift.Text = folderBrowserDialogModeshift.SelectedPath;
+        }
         #endregion
 
         #region Event Handlers
@@ -262,6 +272,8 @@ namespace ServiceBusExplorer.Forms
             txtProxyPassword.Text = MainSettings.ProxyPassword;
 
             SetNodesColorsIntoBindingList(MainSettings.NodesColors);
+
+            configFolderModeshift.Text = MainSettings.ConfigFolderModeshift;
         }
 
         private void SetNodesColorsIntoBindingList(IEnumerable<NodeColorInfo> items)
@@ -519,6 +531,11 @@ namespace ServiceBusExplorer.Forms
             MainSettings.NodesColors = NodesColorInfoBindingList.ToList();
         }
 
+        private void configFolderModeshift_TextChanged(object sender, EventArgs e)
+        {
+            MainSettings.ConfigFolderModeshift = configFolderModeshift.Text;
+        }
+
         #endregion
 
         #region Private methods
@@ -661,6 +678,9 @@ namespace ServiceBusExplorer.Forms
 
             SaveSetting(configuration, readSettings, ConfigurationParameters.NodesColors, NodeColorInfo.FormatAll(MainSettings.NodesColors));
 
+            SaveSetting(configuration, readSettings, ConfigurationParameters.ConfigFolderModeshift,
+                MainSettings.ConfigFolderModeshift);
+
             configuration.Save();
         }
 
@@ -751,6 +771,8 @@ namespace ServiceBusExplorer.Forms
             txtProxyPassword.Text = mainSettings.ProxyPassword;
 
             SetNodesColorsIntoBindingList(mainSettings.NodesColors);
+
+            configFolderModeshift.Text = mainSettings.ConfigFolderModeshift;
         }
 
         List<string> GetSelectedEntities()

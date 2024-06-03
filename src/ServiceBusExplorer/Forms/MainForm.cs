@@ -275,9 +275,7 @@ namespace ServiceBusExplorer.Forms
             configFileUse = TwoFilesConfiguration.GetCurrentConfigFileUse();
 
             tenantsProvider = new TenantsProvider();
-
-            tenantsProvider.Init();
-
+            
             GetServiceBusNamespacesFromConfiguration();
             GetServiceBusNamespaceFromEnvironmentVariable();
             GetBrokeredMessageInspectorsFromConfiguration();
@@ -288,6 +286,8 @@ namespace ServiceBusExplorer.Forms
             ReadEventHubPartitionCheckpointFile();
             UpdateSavedConnectionsMenu();
             DisplayNewVersionInformation();
+
+            tenantsProvider.Init(ConfigFolderModeshift);
 
             WriteToLog(logMessage);
         }
@@ -420,7 +420,9 @@ namespace ServiceBusExplorer.Forms
                 ProxyUserName = ProxyUserName,
                 ProxyPassword = ProxyPassword,
 
-                NodesColors = NodesColors
+                NodesColors = NodesColors,
+
+                ConfigFolderModeshift = ConfigFolderModeshift
             };
 
             var configuration = TwoFilesConfiguration.Create(configFileUse, WriteToLog);
@@ -498,6 +500,8 @@ namespace ServiceBusExplorer.Forms
                 SetProxy(optionForm.MainSettings);
 
                 NodesColors = optionForm.MainSettings.NodesColors;
+
+                ConfigFolderModeshift = optionForm.MainSettings.ConfigFolderModeshift;
             }
 
             ReapplyColors(rootNode);
@@ -3819,7 +3823,8 @@ namespace ServiceBusExplorer.Forms
                 ProxyUseDefaultCredentials = ProxyUseDefaultCredentials,
                 ProxyUserName = ProxyUserName,
                 ProxyPassword = ProxyPassword,
-                NodesColors = NodesColors
+                NodesColors = NodesColors,
+                ConfigFolderModeshift = ConfigFolderModeshift
             };
 
             var readSettings = ConfigurationHelper.GetMainProperties(configFileUse, currentSettings, WriteToLog);
@@ -3936,6 +3941,8 @@ namespace ServiceBusExplorer.Forms
             SetProxy(readSettings);
 
             NodesColors = readSettings.NodesColors;
+
+            ConfigFolderModeshift = readSettings.ConfigFolderModeshift;
         }
 
         private void SetProxy(MainSettings settings)
@@ -4127,6 +4134,8 @@ namespace ServiceBusExplorer.Forms
         public string ProxyPassword { get; set; }
 
         public List<NodeColorInfo> NodesColors { get; set; } = new List<NodeColorInfo>();
+
+        public string ConfigFolderModeshift { get; set; }
 
         public BodyType MessageBodyType
         {

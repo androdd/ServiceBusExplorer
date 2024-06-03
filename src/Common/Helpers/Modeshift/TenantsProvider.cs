@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Xml.Linq;
 
 namespace ServiceBusExplorer.Common.Helpers.Modeshift
@@ -13,9 +10,9 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
     {
         private Dictionary<string, string> tenants;
 
-        public void Init()
+        public void Init(string tenantConfigPath)
         {
-            tenants = GetTenantIdsFromFiles("C:\\Src\\CityServices\\Deployment\\CityServices.Deployment\\TenantProvisioning\\ApplicationParameters\\");
+            tenants = GetTenantIdsFromFiles(tenantConfigPath);
         }
 
         private static Dictionary<string, string> GetTenantIdsFromFiles(string directoryPath)
