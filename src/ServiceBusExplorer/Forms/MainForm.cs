@@ -22,6 +22,7 @@
 #region Using Directives
 using Microsoft.Azure.NotificationHubs;
 using Microsoft.ServiceBus.Messaging;
+using ServiceBusExplorer.Common.Helpers.Modeshift;
 using ServiceBusExplorer.Controls;
 using ServiceBusExplorer.Enums;
 using ServiceBusExplorer.Helpers;
@@ -213,6 +214,7 @@ namespace ServiceBusExplorer.Forms
         private readonly int mainSplitterDistance;
         private readonly int splitterContainerDistance;
         private ConfigFileUse configFileUse;
+        private TenantsProvider tenantsProvider;
         private decimal treeViewFontSize;
         private decimal logFontSize;
         private bool showMessageCount = true;
@@ -271,6 +273,10 @@ namespace ServiceBusExplorer.Forms
             eventClickFieldInfo = typeof(ToolStripItem).GetField(EventClick, BindingFlags.NonPublic | BindingFlags.Static);
             eventsPropertyInfo = typeof(Component).GetProperty(EventsProperty, BindingFlags.NonPublic | BindingFlags.Instance);
             configFileUse = TwoFilesConfiguration.GetCurrentConfigFileUse();
+
+            tenantsProvider = new TenantsProvider();
+
+            tenantsProvider.Init();
 
             GetServiceBusNamespacesFromConfiguration();
             GetServiceBusNamespaceFromEnvironmentVariable();
@@ -4563,7 +4569,7 @@ namespace ServiceBusExplorer.Forms
                         foreach (var subscription in subscriptionDescriptions)
                         {
                             var subscriptionNode = subscriptionsNode.Nodes.Add(subscription.Name,
-                                GetNameAndMessageCountText(subscription.Name, subscription.MessageCountDetails),
+                                GetNameAndMessageCountText(tenantsProvider.SetName(subscription.Name), subscription.MessageCountDetails),
                                 subscription.Status == EntityStatus.Active
                                     ? SubscriptionIconIndex
                                     : GreySubscriptionIconIndex,
