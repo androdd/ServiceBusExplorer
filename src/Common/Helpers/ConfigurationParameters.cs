@@ -71,6 +71,7 @@ namespace ServiceBusExplorer.Helpers
         public const string NodesColors = "Colors.Nodes";
 
         public const string ConfigFolderModeshift = "Modeshift.ConfigFolderModeshift";
+        public const string SubscriptionOrder = "Modeshift.SubscriptionOrder";
 
         #endregion
 

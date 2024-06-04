@@ -44,6 +44,13 @@ namespace ServiceBusExplorer.UIHelpers
         private const string RelayEntities = "Relays";
         private const string PartitionEntities = "Partitions";
         private const string ConsumerGroupEntities = "Consumer Groups";
+        
+        private Func<string> getSubscriptionOrder;
+
+        public TreeViewHelper(Func<string> getSubscriptionOrder)
+        {
+            this.getSubscriptionOrder = getSubscriptionOrder;
+        }
         #endregion
 
         #region IComparer Methods
@@ -110,6 +117,39 @@ namespace ServiceBusExplorer.UIHelpers
             if (rightNode.ImageIndex == MainForm.UrlSegmentIconIndex)
             {
                 return 1;
+            }
+
+            if (leftNode.Tag is SubscriptionWrapper leftSubscription && rightNode.Tag is SubscriptionWrapper rightSubscription)
+            {
+                var subscriptionOrder = getSubscriptionOrder();
+
+                switch (subscriptionOrder)
+                {
+                    case "Name":
+                        break;
+                    case "Dead count":
+                        int deadResult = rightSubscription.SubscriptionDescription.MessageCountDetails.DeadLetterMessageCount.CompareTo(
+                                        leftSubscription.SubscriptionDescription.MessageCountDetails.DeadLetterMessageCount);
+                        
+                        if(deadResult == 0)
+                        {
+                            break;
+                        }
+
+                        return deadResult;
+                    case "Count":
+                        int activeResult = rightSubscription.SubscriptionDescription.MessageCountDetails.ActiveMessageCount.CompareTo(
+                                         leftSubscription.SubscriptionDescription.MessageCountDetails.ActiveMessageCount);
+                        
+                        if (activeResult == 0)
+                        {
+                            break;
+                        }
+
+                        return activeResult;
+                    default:
+                        break;
+                }
             }
 
             return String.CompareOrdinal(leftNode.Text, rightNode.Text);

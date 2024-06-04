@@ -194,7 +194,7 @@ namespace ServiceBusExplorer.Forms
                 return;
             }
 
-            configFolderModeshift.Text = folderBrowserDialogModeshift.SelectedPath;
+            txtConfigFolderModeshift.Text = folderBrowserDialogModeshift.SelectedPath;
         }
         #endregion
 
@@ -273,7 +273,8 @@ namespace ServiceBusExplorer.Forms
 
             SetNodesColorsIntoBindingList(MainSettings.NodesColors);
 
-            configFolderModeshift.Text = MainSettings.ConfigFolderModeshift;
+            txtConfigFolderModeshift.Text = MainSettings.ConfigFolderModeshift;
+            cboSubscriptionOrderModeshift.SelectedItem = MainSettings.SubscriptionOrder;
         }
 
         private void SetNodesColorsIntoBindingList(IEnumerable<NodeColorInfo> items)
@@ -533,7 +534,12 @@ namespace ServiceBusExplorer.Forms
 
         private void configFolderModeshift_TextChanged(object sender, EventArgs e)
         {
-            MainSettings.ConfigFolderModeshift = configFolderModeshift.Text;
+            MainSettings.ConfigFolderModeshift = txtConfigFolderModeshift.Text;
+        }
+
+        private void cboSubscriptionOrderModeshift_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            MainSettings.SubscriptionOrder = cboSubscriptionOrderModeshift.SelectedItem.ToString();
         }
 
         #endregion
@@ -680,6 +686,8 @@ namespace ServiceBusExplorer.Forms
 
             SaveSetting(configuration, readSettings, ConfigurationParameters.ConfigFolderModeshift,
                 MainSettings.ConfigFolderModeshift);
+            SaveSetting(configuration, readSettings, ConfigurationParameters.SubscriptionOrder,
+                MainSettings.SubscriptionOrder);
 
             configuration.Save();
         }
@@ -772,7 +780,8 @@ namespace ServiceBusExplorer.Forms
 
             SetNodesColorsIntoBindingList(mainSettings.NodesColors);
 
-            configFolderModeshift.Text = mainSettings.ConfigFolderModeshift;
+            txtConfigFolderModeshift.Text = mainSettings.ConfigFolderModeshift;
+            cboSubscriptionOrderModeshift.SelectedItem = mainSettings.SubscriptionOrder;
         }
 
         List<string> GetSelectedEntities()

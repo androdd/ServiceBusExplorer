@@ -232,6 +232,7 @@ namespace ServiceBusExplorer.Helpers
             resultProperties.NodesColors = NodeColorInfo.ParseAll(configuration.GetStringValue(ConfigurationParameters.NodesColors, string.Empty));
 
             resultProperties.ConfigFolderModeshift = configuration.GetStringValue(ConfigurationParameters.ConfigFolderModeshift, string.Empty);
+            resultProperties.SubscriptionOrder = configuration.GetStringValue(ConfigurationParameters.SubscriptionOrder, "Name");
 
             return resultProperties;
         }

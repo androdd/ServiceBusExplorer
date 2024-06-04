@@ -156,7 +156,7 @@ namespace ServiceBusExplorer.Forms
             this.nodeColorsBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.tabPageModeshift = new System.Windows.Forms.TabPage();
             this.btnBrowseConfigFolderModeshift = new System.Windows.Forms.Button();
-            this.configFolderModeshift = new System.Windows.Forms.TextBox();
+            this.txtConfigFolderModeshift = new System.Windows.Forms.TextBox();
             this.lblConfigFolderModeshift = new System.Windows.Forms.Label();
             this.mainPanel = new System.Windows.Forms.Panel();
             this.btnCancel = new System.Windows.Forms.Button();
@@ -164,6 +164,8 @@ namespace ServiceBusExplorer.Forms
             this.dataGridViewColorPickerColumn1 = new ServiceBusExplorer.Controls.DataGridViewColorPickerColumn();
             this.dataGridViewTextBoxColumn2 = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.folderBrowserDialogModeshift = new System.Windows.Forms.FolderBrowserDialog();
+            this.lblSubscriptionOrderModeshift = new System.Windows.Forms.Label();
+            this.cboSubscriptionOrderModeshift = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
             this.tabOptionsControl.SuspendLayout();
@@ -1483,8 +1485,10 @@ namespace ServiceBusExplorer.Forms
             // tabPageModeshift
             // 
             this.tabPageModeshift.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
+            this.tabPageModeshift.Controls.Add(this.cboSubscriptionOrderModeshift);
+            this.tabPageModeshift.Controls.Add(this.lblSubscriptionOrderModeshift);
             this.tabPageModeshift.Controls.Add(this.btnBrowseConfigFolderModeshift);
-            this.tabPageModeshift.Controls.Add(this.configFolderModeshift);
+            this.tabPageModeshift.Controls.Add(this.txtConfigFolderModeshift);
             this.tabPageModeshift.Controls.Add(this.lblConfigFolderModeshift);
             this.tabPageModeshift.Location = new System.Drawing.Point(4, 25);
             this.tabPageModeshift.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1509,20 +1513,20 @@ namespace ServiceBusExplorer.Forms
             this.btnBrowseConfigFolderModeshift.Name = "btnBrowseConfigFolderModeshift";
             this.btnBrowseConfigFolderModeshift.Size = new System.Drawing.Size(96, 30);
             this.btnBrowseConfigFolderModeshift.TabIndex = 4;
-            this.btnBrowseConfigFolderModeshift.Text = "O&pen";
+            this.btnBrowseConfigFolderModeshift.Text = "&Browse";
             this.btnBrowseConfigFolderModeshift.UseVisualStyleBackColor = false;
             this.btnBrowseConfigFolderModeshift.Click += new System.EventHandler(this.btnBrowseConfigFolderModeshift_Click);
             // 
-            // configFolderModeshift
+            // txtConfigFolderModeshift
             // 
-            this.configFolderModeshift.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtConfigFolderModeshift.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.configFolderModeshift.Location = new System.Drawing.Point(291, 20);
-            this.configFolderModeshift.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.configFolderModeshift.Name = "configFolderModeshift";
-            this.configFolderModeshift.Size = new System.Drawing.Size(363, 22);
-            this.configFolderModeshift.TabIndex = 4;
-            this.configFolderModeshift.TextChanged += new System.EventHandler(this.configFolderModeshift_TextChanged);
+            this.txtConfigFolderModeshift.Location = new System.Drawing.Point(291, 20);
+            this.txtConfigFolderModeshift.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.txtConfigFolderModeshift.Name = "txtConfigFolderModeshift";
+            this.txtConfigFolderModeshift.Size = new System.Drawing.Size(363, 22);
+            this.txtConfigFolderModeshift.TabIndex = 4;
+            this.txtConfigFolderModeshift.TextChanged += new System.EventHandler(this.configFolderModeshift_TextChanged);
             // 
             // lblConfigFolderModeshift
             // 
@@ -1597,6 +1601,34 @@ namespace ServiceBusExplorer.Forms
             // folderBrowserDialogModeshift
             // 
             this.folderBrowserDialogModeshift.RootFolder = System.Environment.SpecialFolder.MyComputer;
+            // 
+            // lblSubscriptionOrderModeshift
+            // 
+            this.lblSubscriptionOrderModeshift.AutoSize = true;
+            this.lblSubscriptionOrderModeshift.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.lblSubscriptionOrderModeshift.Location = new System.Drawing.Point(21, 62);
+            this.lblSubscriptionOrderModeshift.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSubscriptionOrderModeshift.Name = "lblSubscriptionOrderModeshift";
+            this.lblSubscriptionOrderModeshift.Size = new System.Drawing.Size(119, 16);
+            this.lblSubscriptionOrderModeshift.TabIndex = 5;
+            this.lblSubscriptionOrderModeshift.Text = "Subscription order:";
+            // 
+            // cboSubscriptionOrderModeshift
+            // 
+            this.cboSubscriptionOrderModeshift.BackColor = System.Drawing.SystemColors.Window;
+            this.cboSubscriptionOrderModeshift.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboSubscriptionOrderModeshift.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.cboSubscriptionOrderModeshift.FormattingEnabled = true;
+            this.cboSubscriptionOrderModeshift.Items.AddRange(new object[] {
+            "Name",
+            "Dead count",
+            "Count"});
+            this.cboSubscriptionOrderModeshift.Location = new System.Drawing.Point(291, 59);
+            this.cboSubscriptionOrderModeshift.Margin = new System.Windows.Forms.Padding(4);
+            this.cboSubscriptionOrderModeshift.Name = "cboSubscriptionOrderModeshift";
+            this.cboSubscriptionOrderModeshift.Size = new System.Drawing.Size(363, 24);
+            this.cboSubscriptionOrderModeshift.TabIndex = 17;
+            this.cboSubscriptionOrderModeshift.SelectedIndexChanged += new System.EventHandler(this.cboSubscriptionOrderModeshift_SelectedIndexChanged);
             // 
             // OptionForm
             // 
@@ -1758,8 +1790,10 @@ namespace ServiceBusExplorer.Forms
         private System.Windows.Forms.DataGridViewTextBoxColumn textDataGridViewTextBoxColumn;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IsLeaf;
         private DataGridViewColorPickerColumn colorDataGridViewTextBoxColumn;
-        private System.Windows.Forms.TextBox configFolderModeshift;
+        private System.Windows.Forms.TextBox txtConfigFolderModeshift;
         private System.Windows.Forms.Button btnBrowseConfigFolderModeshift;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogModeshift;
+        private System.Windows.Forms.Label lblSubscriptionOrderModeshift;
+        private System.Windows.Forms.ComboBox cboSubscriptionOrderModeshift;
     }
 }

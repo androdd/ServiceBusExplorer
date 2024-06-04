@@ -81,6 +81,7 @@ namespace ServiceBusExplorer.Helpers
         public List<NodeColorInfo> NodesColors { get; set; } = new List<NodeColorInfo>();
 
         public string ConfigFolderModeshift { get; set; }
+        public string SubscriptionOrder { get; set; }
 
         #endregion
 
@@ -144,6 +145,7 @@ namespace ServiceBusExplorer.Helpers
             NodesColors = new List<NodeColorInfo>();
 
             ConfigFolderModeshift = string.Empty;
+            SubscriptionOrder = "Name";
         }
 
         public override bool Equals(object other)
@@ -194,6 +196,7 @@ namespace ServiceBusExplorer.Helpers
             if (NodesColors.SequenceEqual(otherProperties.NodesColors)) return false;
 
             if (ConfigFolderModeshift != otherProperties.ConfigFolderModeshift) return false;
+            if (SubscriptionOrder != otherProperties.SubscriptionOrder) return false;
 
             return true;
         }
@@ -326,6 +329,9 @@ namespace ServiceBusExplorer.Helpers
 
                 case ConfigurationParameters.ConfigFolderModeshift:
                     return ConfigFolderModeshift;
+
+                case ConfigurationParameters.SubscriptionOrder:
+                    return SubscriptionOrder;
             }
 
             throw new InvalidOperationException(String.Format("Unexpected value for setting: {0}", setting));

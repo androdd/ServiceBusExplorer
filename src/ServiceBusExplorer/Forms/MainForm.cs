@@ -48,6 +48,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 #endregion
 
 namespace ServiceBusExplorer.Forms
@@ -268,8 +269,7 @@ namespace ServiceBusExplorer.Forms
             mainSingletonMainForm = this;
             serviceBusHelper = new ServiceBusHelper(WriteToLog);
             serviceBusHelper.OnCreate += serviceBusHelper_OnCreate;
-            serviceBusHelper.OnDelete += serviceBusHelper_OnDelete;
-            serviceBusTreeView.TreeViewNodeSorter = new TreeViewHelper();
+            serviceBusHelper.OnDelete += serviceBusHelper_OnDelete;            
             eventClickFieldInfo = typeof(ToolStripItem).GetField(EventClick, BindingFlags.NonPublic | BindingFlags.Static);
             eventsPropertyInfo = typeof(Component).GetProperty(EventsProperty, BindingFlags.NonPublic | BindingFlags.Instance);
             configFileUse = TwoFilesConfiguration.GetCurrentConfigFileUse();
@@ -288,6 +288,7 @@ namespace ServiceBusExplorer.Forms
             DisplayNewVersionInformation();
 
             tenantsProvider.Init(ConfigFolderModeshift);
+            serviceBusTreeView.TreeViewNodeSorter = new TreeViewHelper(() => SubscriptionOrder);
 
             WriteToLog(logMessage);
         }
@@ -422,7 +423,8 @@ namespace ServiceBusExplorer.Forms
 
                 NodesColors = NodesColors,
 
-                ConfigFolderModeshift = ConfigFolderModeshift
+                ConfigFolderModeshift = ConfigFolderModeshift,
+                SubscriptionOrder = SubscriptionOrder
             };
 
             var configuration = TwoFilesConfiguration.Create(configFileUse, WriteToLog);
@@ -502,6 +504,7 @@ namespace ServiceBusExplorer.Forms
                 NodesColors = optionForm.MainSettings.NodesColors;
 
                 ConfigFolderModeshift = optionForm.MainSettings.ConfigFolderModeshift;
+                SubscriptionOrder = optionForm.MainSettings.SubscriptionOrder;
             }
 
             ReapplyColors(rootNode);
@@ -3050,12 +3053,15 @@ namespace ServiceBusExplorer.Forms
                             subscriptionsNode.Nodes.Clear();
                             foreach (var subscription in subscriptionDescriptions)
                             {
-                                var subscriptionNode = subscriptionsNode.Nodes.Add(subscription.Name,
-                                                                                   GetNameAndMessageCountText(subscription.Name, subscription.MessageCountDetails),
-                                                                                   subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex,
-                                                                                   subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex);
+                                TreeNode subscriptionNode = new TreeNode(
+                                    GetNameAndMessageCountText(subscription.Name, subscription.MessageCountDetails),
+                                    subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex,
+                                    subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex);
+                                subscriptionNode.Name = subscription.Name;
                                 subscriptionNode.ContextMenuStrip = subscriptionContextMenuStrip;
                                 subscriptionNode.Tag = new SubscriptionWrapper(subscription, wrapper.TopicDescription);
+                                subscriptionsNode.Nodes.Add(subscriptionNode);
+
                                 WriteToLog(string.Format(CultureInfo.CurrentCulture, SubscriptionRetrievedFormat, subscription.Name, wrapper.TopicDescription.Path), false);
                                 var rules = serviceBusHelper.GetRules(subscription);
                                 var ruleDescriptions = rules as RuleDescription[] ?? rules.ToArray();
@@ -3824,7 +3830,8 @@ namespace ServiceBusExplorer.Forms
                 ProxyUserName = ProxyUserName,
                 ProxyPassword = ProxyPassword,
                 NodesColors = NodesColors,
-                ConfigFolderModeshift = ConfigFolderModeshift
+                ConfigFolderModeshift = ConfigFolderModeshift,
+                SubscriptionOrder = SubscriptionOrder
             };
 
             var readSettings = ConfigurationHelper.GetMainProperties(configFileUse, currentSettings, WriteToLog);
@@ -3943,6 +3950,7 @@ namespace ServiceBusExplorer.Forms
             NodesColors = readSettings.NodesColors;
 
             ConfigFolderModeshift = readSettings.ConfigFolderModeshift;
+            SubscriptionOrder = readSettings.SubscriptionOrder;
         }
 
         private void SetProxy(MainSettings settings)
@@ -4136,6 +4144,7 @@ namespace ServiceBusExplorer.Forms
         public List<NodeColorInfo> NodesColors { get; set; } = new List<NodeColorInfo>();
 
         public string ConfigFolderModeshift { get; set; }
+        public string SubscriptionOrder { get; set; }
 
         public BodyType MessageBodyType
         {
@@ -4577,16 +4586,14 @@ namespace ServiceBusExplorer.Forms
                             FilterExpressionHelper.SubscriptionFilterExpression);
                         foreach (var subscription in subscriptionDescriptions)
                         {
-                            var subscriptionNode = subscriptionsNode.Nodes.Add(subscription.Name,
-                                GetNameAndMessageCountText(tenantsProvider.SetName(subscription.Name), subscription.MessageCountDetails),
-                                subscription.Status == EntityStatus.Active
-                                    ? SubscriptionIconIndex
-                                    : GreySubscriptionIconIndex,
-                                subscription.Status == EntityStatus.Active
-                                    ? SubscriptionIconIndex
-                                    : GreySubscriptionIconIndex);
+                            var subscriptionNode = new TreeNode(
+                                GetNameAndMessageCountText(subscription.Name, subscription.MessageCountDetails),
+                                subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex,
+                                subscription.Status == EntityStatus.Active ? SubscriptionIconIndex : GreySubscriptionIconIndex);
+                            subscriptionNode.Name = subscription.Name;
                             subscriptionNode.ContextMenuStrip = subscriptionContextMenuStrip;
                             subscriptionNode.Tag = new SubscriptionWrapper(subscription, topic);
+                            subscriptionsNode.Nodes.Add(subscriptionNode);
                             // All subscription nodes have a "Rules" node, so add one so that the item appears to have children.
                             // We will Lazy Load the actual rules node if/when it is needed.
                             subscriptionNode.Nodes.Clear();
@@ -5760,6 +5767,8 @@ namespace ServiceBusExplorer.Forms
 
         private string GetNameAndMessageCountText(string name, MessageCountDetails details)
         {
+            name = tenantsProvider.SetName(name);
+
             var sb = new StringBuilder();
             sb.Append(name);
             if (showMessageCount && SelectedMessageCounts.Any())
