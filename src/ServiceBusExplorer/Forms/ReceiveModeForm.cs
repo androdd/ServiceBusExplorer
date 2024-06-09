@@ -74,6 +74,7 @@ namespace ServiceBusExplorer.Forms
         public int Count { get; private set; }
         public bool Peek { get; private set; }
         public bool All { get; private set; }
+        public bool Bottom { get; private set; }
         public string? Inspector { get; private set; }
         public long? FromSequenceNumber { get; private set; }
         public string? FromSession { get; private set; }
@@ -89,6 +90,7 @@ namespace ServiceBusExplorer.Forms
             }
             Peek = btnPeek.Checked;
             All = btnAll.Checked;
+            Bottom = btnBottom.Checked;
             if (cboReceiverInspector.SelectedIndex > 0)
             {
                 Inspector = cboReceiverInspector.Text;
@@ -149,6 +151,11 @@ namespace ServiceBusExplorer.Forms
         private void btnTop_CheckedChanged(object sender, EventArgs e)
         {
             txtMessageCount.Enabled = btnTop.Checked;
+        }
+
+        private void btnBottom_CheckedChanged(object sender, EventArgs e)
+        {
+            txtMessageCount.Enabled = btnBottom.Checked;
         }
 
         private void receiveMode_CheckedChanged(object sender, EventArgs e)

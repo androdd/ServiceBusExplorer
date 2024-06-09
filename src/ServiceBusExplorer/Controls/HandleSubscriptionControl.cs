@@ -22,7 +22,7 @@
 #region Using Directives
 
 using Microsoft.ServiceBus.Messaging;
-
+using ServiceBusExplorer.Common.Helpers.Modeshift;
 using ServiceBusExplorer.Forms;
 using ServiceBusExplorer.Helpers;
 using ServiceBusExplorer.ServiceBus.Helpers;
@@ -270,11 +270,11 @@ namespace ServiceBusExplorer.Controls
                     null;
                 if (subscriptionWrapper.TopicDescription.EnablePartitioning)
                 {
-                    ReadDeadletterMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                    ReadDeadletterMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                 }
                 else
                 {
-                    GetDeadletterMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                    GetDeadletterMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                 }
             }
         }
@@ -296,11 +296,11 @@ namespace ServiceBusExplorer.Controls
                     null;
                 if (subscriptionWrapper.TopicDescription.EnablePartitioning)
                 {
-                    ReadDeadletterMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                    ReadDeadletterMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                 }
                 else
                 {
-                    GetDeadletterMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                    GetDeadletterMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                 }
             }
         }
@@ -1096,7 +1096,7 @@ namespace ServiceBusExplorer.Controls
             }
         }
 
-        private void GetDeadletterMessages(bool peek, bool all, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
+        private void GetDeadletterMessages(bool peek, bool all, bool bottom, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
         {
             try
             {
@@ -1108,11 +1108,23 @@ namespace ServiceBusExplorer.Controls
                 Cursor.Current = Cursors.WaitCursor;
                 var brokeredMessages = new List<BrokeredMessage>();
 
-                if (peek)
+                if (bottom)
                 {
-                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(SubscriptionClient.FormatDeadLetterPath(subscriptionWrapper.SubscriptionDescription.TopicPath,
-                                                                                                                              subscriptionWrapper.SubscriptionDescription.Name),
-                                                                                              ReceiveMode.PeekLock);
+                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(
+                        SubscriptionClient.FormatDeadLetterPath(subscriptionWrapper.SubscriptionDescription.TopicPath, subscriptionWrapper.SubscriptionDescription.Name),
+                        ReceiveMode.PeekLock);
+
+                    var messagePeeker = new MessagePeeker(writeToLog, messageReceiver, messageInspector, false);
+
+                    brokeredMessages = messagePeeker.Peek(
+                        count,
+                        subscriptionWrapper.SubscriptionDescription.MessageCountDetails.DeadLetterMessageCount);
+                }
+                else if (peek)
+                {
+                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(
+                        SubscriptionClient.FormatDeadLetterPath(subscriptionWrapper.SubscriptionDescription.TopicPath, subscriptionWrapper.SubscriptionDescription.Name), 
+                        ReceiveMode.PeekLock);
                     var totalRetrieved = 0;
                     var retrieved = 0;
 
@@ -1210,7 +1222,7 @@ namespace ServiceBusExplorer.Controls
             }
             catch (NotSupportedException)
             {
-                ReadDeadletterMessagesOneAtTheTime(peek, all, count, messageInspector, fromSequenceNumber);
+                ReadDeadletterMessagesOneAtTheTime(peek, all, bottom, count, messageInspector, fromSequenceNumber);
             }
             catch (Exception ex)
             {
@@ -1226,13 +1238,25 @@ namespace ServiceBusExplorer.Controls
             }
         }
 
-        private void ReadDeadletterMessagesOneAtTheTime(bool peek, bool all, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
+        private void ReadDeadletterMessagesOneAtTheTime(bool peek, bool all, bool bottom, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
         {
             try
             {
                 var brokeredMessages = new List<BrokeredMessage>();
 
-                if (peek)
+                if (bottom)
+                {
+                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(
+                        SubscriptionClient.FormatDeadLetterPath(subscriptionWrapper.SubscriptionDescription.TopicPath, subscriptionWrapper.SubscriptionDescription.Name),
+                        ReceiveMode.PeekLock);
+
+                    var messagePeeker = new MessagePeeker(writeToLog, messageReceiver, messageInspector, true);
+
+                    brokeredMessages = messagePeeker.Peek(
+                        count,
+                        subscriptionWrapper.SubscriptionDescription.MessageCountDetails.DeadLetterMessageCount);
+                }
+                else if (peek)
                 {
                     var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(SubscriptionClient.FormatDeadLetterPath(subscriptionWrapper.SubscriptionDescription.TopicPath,
                                                                                                                               subscriptionWrapper.SubscriptionDescription.Name),

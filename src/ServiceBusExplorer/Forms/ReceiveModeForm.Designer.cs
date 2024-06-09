@@ -64,6 +64,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperInspector = new ServiceBusExplorer.Controls.Grouper();
             this.cboReceiverInspector = new System.Windows.Forms.ComboBox();
             this.grouperMessages = new ServiceBusExplorer.Controls.Grouper();
+            this.btnBottom = new System.Windows.Forms.RadioButton();
             this.txtMessageCount = new ServiceBusExplorer.Controls.NumericTextBox();
             this.btnTop = new System.Windows.Forms.RadioButton();
             this.btnAll = new System.Windows.Forms.RadioButton();
@@ -86,7 +87,7 @@ namespace ServiceBusExplorer.Forms
             this.btnOk.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnOk.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnOk.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnOk.Location = new System.Drawing.Point(522, 169);
+            this.btnOk.Location = new System.Drawing.Point(591, 169);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(72, 24);
             this.btnOk.TabIndex = 1;
@@ -104,7 +105,7 @@ namespace ServiceBusExplorer.Forms
             this.btnCancel.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancel.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.btnCancel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnCancel.Location = new System.Drawing.Point(602, 169);
+            this.btnCancel.Location = new System.Drawing.Point(671, 169);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(72, 24);
             this.btnCancel.TabIndex = 2;
@@ -126,7 +127,7 @@ namespace ServiceBusExplorer.Forms
             this.mainPanel.Controls.Add(this.grouperReadMode);
             this.mainPanel.Location = new System.Drawing.Point(0, 0);
             this.mainPanel.Name = "mainPanel";
-            this.mainPanel.Size = new System.Drawing.Size(690, 155);
+            this.mainPanel.Size = new System.Drawing.Size(759, 155);
             this.mainPanel.TabIndex = 0;
             this.mainPanel.Paint += new System.Windows.Forms.PaintEventHandler(this.mainPanel_Paint);
             // 
@@ -143,7 +144,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperSession.ForeColor = System.Drawing.Color.White;
             this.grouperSession.GroupImage = null;
             this.grouperSession.GroupTitle = "From Session";
-            this.grouperSession.Location = new System.Drawing.Point(465, 80);
+            this.grouperSession.Location = new System.Drawing.Point(535, 80);
             this.grouperSession.Name = "grouperSession";
             this.grouperSession.Padding = new System.Windows.Forms.Padding(20);
             this.grouperSession.PaintGroupBox = true;
@@ -176,7 +177,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperFrom.ForeColor = System.Drawing.Color.White;
             this.grouperFrom.GroupImage = null;
             this.grouperFrom.GroupTitle = "From Sequence Number";
-            this.grouperFrom.Location = new System.Drawing.Point(465, 8);
+            this.grouperFrom.Location = new System.Drawing.Point(535, 8);
             this.grouperFrom.Name = "grouperFrom";
             this.grouperFrom.Padding = new System.Windows.Forms.Padding(20);
             this.grouperFrom.PaintGroupBox = true;
@@ -189,8 +190,12 @@ namespace ServiceBusExplorer.Forms
             // 
             // txtFromSequenceNumber
             // 
+            this.txtFromSequenceNumber.AllowDecimal = false;
+            this.txtFromSequenceNumber.AllowNegative = false;
+            this.txtFromSequenceNumber.AllowSpace = false;
             this.txtFromSequenceNumber.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFromSequenceNumber.IsZeroWhenEmpty = false;
             this.txtFromSequenceNumber.Location = new System.Drawing.Point(15, 32);
             this.txtFromSequenceNumber.Name = "txtFromSequenceNumber";
             this.txtFromSequenceNumber.Size = new System.Drawing.Size(177, 20);
@@ -218,7 +223,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperInspector.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperInspector.ShadowControl = false;
             this.grouperInspector.ShadowThickness = 1;
-            this.grouperInspector.Size = new System.Drawing.Size(432, 64);
+            this.grouperInspector.Size = new System.Drawing.Size(504, 64);
             this.grouperInspector.TabIndex = 43;
             this.grouperInspector.CustomPaint += new System.Action<System.Windows.Forms.PaintEventArgs>(this.grouperInspector_CustomPaint);
             // 
@@ -229,7 +234,7 @@ namespace ServiceBusExplorer.Forms
             this.cboReceiverInspector.FormattingEnabled = true;
             this.cboReceiverInspector.Location = new System.Drawing.Point(16, 32);
             this.cboReceiverInspector.Name = "cboReceiverInspector";
-            this.cboReceiverInspector.Size = new System.Drawing.Size(400, 21);
+            this.cboReceiverInspector.Size = new System.Drawing.Size(472, 21);
             this.cboReceiverInspector.TabIndex = 92;
             // 
             // grouperMessages
@@ -239,6 +244,7 @@ namespace ServiceBusExplorer.Forms
             this.grouperMessages.BackgroundGradientMode = ServiceBusExplorer.Controls.Grouper.GroupBoxGradientMode.None;
             this.grouperMessages.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(153)))), ((int)(((byte)(180)))), ((int)(((byte)(209)))));
             this.grouperMessages.BorderThickness = 1F;
+            this.grouperMessages.Controls.Add(this.btnBottom);
             this.grouperMessages.Controls.Add(this.txtMessageCount);
             this.grouperMessages.Controls.Add(this.btnTop);
             this.grouperMessages.Controls.Add(this.btnAll);
@@ -255,16 +261,32 @@ namespace ServiceBusExplorer.Forms
             this.grouperMessages.ShadowColor = System.Drawing.Color.DarkGray;
             this.grouperMessages.ShadowControl = false;
             this.grouperMessages.ShadowThickness = 1;
-            this.grouperMessages.Size = new System.Drawing.Size(208, 64);
+            this.grouperMessages.Size = new System.Drawing.Size(280, 64);
             this.grouperMessages.TabIndex = 42;
+            // 
+            // btnBottom
+            // 
+            this.btnBottom.AutoSize = true;
+            this.btnBottom.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnBottom.Location = new System.Drawing.Point(105, 32);
+            this.btnBottom.Name = "btnBottom";
+            this.btnBottom.Size = new System.Drawing.Size(58, 17);
+            this.btnBottom.TabIndex = 43;
+            this.btnBottom.Text = "Bottom";
+            this.btnBottom.UseVisualStyleBackColor = true;
+            this.btnBottom.CheckedChanged += new System.EventHandler(this.btnBottom_CheckedChanged);
             // 
             // txtMessageCount
             // 
+            this.txtMessageCount.AllowDecimal = false;
+            this.txtMessageCount.AllowNegative = false;
+            this.txtMessageCount.AllowSpace = false;
             this.txtMessageCount.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMessageCount.Location = new System.Drawing.Point(112, 32);
+            this.txtMessageCount.IsZeroWhenEmpty = false;
+            this.txtMessageCount.Location = new System.Drawing.Point(169, 32);
             this.txtMessageCount.Name = "txtMessageCount";
-            this.txtMessageCount.Size = new System.Drawing.Size(80, 20);
+            this.txtMessageCount.Size = new System.Drawing.Size(95, 20);
             this.txtMessageCount.TabIndex = 42;
             // 
             // btnTop
@@ -272,7 +294,7 @@ namespace ServiceBusExplorer.Forms
             this.btnTop.AutoSize = true;
             this.btnTop.Checked = true;
             this.btnTop.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnTop.Location = new System.Drawing.Point(64, 32);
+            this.btnTop.Location = new System.Drawing.Point(55, 32);
             this.btnTop.Name = "btnTop";
             this.btnTop.Size = new System.Drawing.Size(44, 17);
             this.btnTop.TabIndex = 41;
@@ -349,7 +371,7 @@ namespace ServiceBusExplorer.Forms
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(215)))), ((int)(((byte)(228)))), ((int)(((byte)(242)))));
-            this.ClientSize = new System.Drawing.Size(690, 205);
+            this.ClientSize = new System.Drawing.Size(759, 205);
             this.Controls.Add(this.mainPanel);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnOk);
@@ -394,5 +416,6 @@ namespace ServiceBusExplorer.Forms
         private ServiceBusExplorer.Controls.NumericTextBox txtFromSequenceNumber;
         private Grouper grouperSession;
         private System.Windows.Forms.TextBox txtFromSession;
+        private System.Windows.Forms.RadioButton btnBottom;
     }
 }
