@@ -243,11 +243,11 @@ namespace ServiceBusExplorer.Controls
                                            null;
                     if (subscriptionWrapper.TopicDescription.EnablePartitioning)
                     {
-                        ReadMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                        ReadMessagesOneAtTheTime(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                     }
                     else
                     {
-                        GetMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
+                        GetMessages(receiveModeForm.Peek, receiveModeForm.All, receiveModeForm.Bottom, receiveModeForm.Count, messageInspector, receiveModeForm.FromSequenceNumber);
                     }
                 }
             }
@@ -846,7 +846,7 @@ namespace ServiceBusExplorer.Controls
                                           subscriptionWrapper.SubscriptionDescription.RequiresSession);
         }
 
-        private void GetMessages(bool peek, bool all, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
+        private void GetMessages(bool peek, bool all, bool bottom, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
         {
             try
             {
@@ -857,7 +857,20 @@ namespace ServiceBusExplorer.Controls
 
                 Cursor.Current = Cursors.WaitCursor;
                 var brokeredMessages = new List<BrokeredMessage>();
-                if (peek)
+
+                if (bottom)
+                {
+                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(
+                        SubscriptionClient.FormatSubscriptionPath(subscriptionWrapper.SubscriptionDescription.TopicPath, subscriptionWrapper.SubscriptionDescription.Name),
+                        ReceiveMode.PeekLock);
+
+                    var messagePeeker = new MessagePeeker(writeToLog, messageReceiver, messageInspector, false);
+
+                    brokeredMessages = messagePeeker.Peek(
+                        count,
+                        subscriptionWrapper.SubscriptionDescription.MessageCountDetails.ActiveMessageCount);
+                }
+                else if (peek)
                 {
                     var subscriptionClient = serviceBusHelper.MessagingFactory.CreateSubscriptionClient(subscriptionWrapper.SubscriptionDescription.TopicPath,
                                                                                                         subscriptionWrapper.SubscriptionDescription.Name,
@@ -967,7 +980,7 @@ namespace ServiceBusExplorer.Controls
             }
             catch (NotSupportedException)
             {
-                ReadMessagesOneAtTheTime(peek, all, count, messageInspector, fromSequenceNumber);
+                ReadMessagesOneAtTheTime(peek, all, bottom, count, messageInspector, fromSequenceNumber);
             }
             catch (Exception ex)
             {
@@ -983,12 +996,25 @@ namespace ServiceBusExplorer.Controls
             }
         }
 
-        private void ReadMessagesOneAtTheTime(bool peek, bool all, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
+        private void ReadMessagesOneAtTheTime(bool peek, bool all, bool bottom, int count, IBrokeredMessageInspector messageInspector, long? fromSequenceNumber)
         {
             try
             {
                 var brokeredMessages = new List<BrokeredMessage>();
-                if (peek)
+
+                if (bottom)
+                {
+                    var messageReceiver = serviceBusHelper.MessagingFactory.CreateMessageReceiver(
+                        SubscriptionClient.FormatSubscriptionPath(subscriptionWrapper.SubscriptionDescription.TopicPath, subscriptionWrapper.SubscriptionDescription.Name),
+                        ReceiveMode.PeekLock);
+
+                    var messagePeeker = new MessagePeeker(writeToLog, messageReceiver, messageInspector, true);
+
+                    brokeredMessages = messagePeeker.Peek(
+                        count,
+                        subscriptionWrapper.SubscriptionDescription.MessageCountDetails.ActiveMessageCount);
+                }
+                else if (peek)
                 {
                     var subscriptionClient = serviceBusHelper.MessagingFactory.CreateSubscriptionClient(subscriptionWrapper.SubscriptionDescription.TopicPath,
                                                                                                  subscriptionWrapper.SubscriptionDescription.Name,

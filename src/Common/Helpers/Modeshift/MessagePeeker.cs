@@ -1,6 +1,7 @@
 ﻿using Microsoft.ServiceBus.Messaging;
 using ServiceBusExplorer.Helpers;
 using ServiceBusExplorer.Utilities.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -34,7 +35,7 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
             return PeekUnpartitioned(count, deadLetterMessageCount); 
         }
 
-        private List<BrokeredMessage> PeekUnpartitioned(int count, long deadLetterMessageCount)
+        private List<BrokeredMessage> PeekUnpartitioned(int count, long allMessagesCount)
         {
             var peeks = 0;
 
@@ -55,7 +56,7 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
 
             var initialSequence = initialMessages.Last().SequenceNumber;
             var lowerBound = initialSequence;
-            var step = deadLetterMessageCount;
+            var step = allMessagesCount;
             var messages = new List<BrokeredMessage>();
 
             // Incrementally find an upper bound
@@ -67,7 +68,7 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
                 {
                     break;
                 }
-                lowerBound += step;
+                lowerBound = Math.Max(lowerBound + step, messages.Last().SequenceNumber);
                 step *= 2;
             }
 
@@ -86,6 +87,12 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
                 {
                     lowerBound = midPoint + 1;
                 }
+
+                if (peeks > 1000)
+                {
+                    writeToLog("!!! More than 1000 API calls were made. Operation has been stopped.");
+                    return new List<BrokeredMessage>();
+                }
             }
 
             writeToLog($"Peeked with {peeks} api calls.");
@@ -93,17 +100,22 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
             return messages;
         }
 
-        public List<BrokeredMessage> PeekPartitioned(int count, long deadLetterMessageCount)
+        public List<BrokeredMessage> PeekPartitioned(int count, long allMessagesCount)
         {
+            if(count > 10)
+            {
+                count = 10; // MOre than this will result in too many API calls
+            }
+
             var peeks = 0;
             var messages = new List<BrokeredMessage>();
 
-            if (deadLetterMessageCount < 1)
+            if (allMessagesCount < 1)
             {
                 return messages;
             }
 
-            if(deadLetterMessageCount <= count)
+            if(allMessagesCount <= count)
             {
                 messages = PeekBatch(count);
                 writeToLog($"Peeked with {messages.Count} api calls.");
@@ -115,7 +127,7 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
                         
             var initialSequence = initialMessages.Last().SequenceNumber;
             var lowerBound = initialSequence;
-            var step = deadLetterMessageCount;
+            var step = allMessagesCount;
             
             // Incrementally find an upper bound
             while (true)
@@ -126,8 +138,14 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
                 {
                     break;
                 }
-                lowerBound += step;
+                lowerBound = Math.Max(lowerBound + step, messages.Last().SequenceNumber);
                 step *= 2;
+
+                if (peeks > 1000)
+                {
+                    writeToLog("!!! More than 1000 API calls were made. Operation has been stopped.");
+                    return new List<BrokeredMessage>();
+                }
             }
 
             // Binary search to find the approximate last position
@@ -144,6 +162,12 @@ namespace ServiceBusExplorer.Common.Helpers.Modeshift
                 else
                 {
                     lowerBound = midPoint + 1;
+                }
+
+                if(peeks > 1000)
+                {
+                    writeToLog("!!! More than 1000 API calls were made. Operation has been stopped.");
+                    return new List<BrokeredMessage>();
                 }
             }
 
